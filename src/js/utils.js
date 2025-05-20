@@ -59,7 +59,7 @@ function dragTrack(eventBucket, area, onInput, onChange) {
             w = bounds.width,
             h = bounds.height,
             x = info.clientX,
-            y = info.clientY;console.log(1,x,y)
+            y = info.clientY;
 
         var relX = clamp(x - bounds.left, 0, w),
             relY = clamp(y - bounds.top, 0, h);

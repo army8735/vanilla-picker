@@ -66,7 +66,7 @@ function init() {
             parentCustom.style.background = color.rgbaString;
         },
     });
-    customPlacement.onchange = function (e) {
+    customPlacement.onInput = function (e) {
         popupCustom.setOptions({
             popup: customPlacement.value,
         });
@@ -82,7 +82,7 @@ function init() {
     /* Shared picker */
     popupShared = new Picker({
         editorFormat: 'hsl',
-        onChange: function (color) {
+        onInput: function (color) {
             this.settings.parent.style.backgroundColor = color.rgbaString;
         }
     });
@@ -105,7 +105,7 @@ function init() {
         //editor: false,
         editorFormat: 'rgb',
         color: '#cef6',
-        onChange: function (color) {
+        onInput: function (color) {
             document.body.style.backgroundColor = color.rgbaString;
         },
     });
@@ -118,7 +118,7 @@ function init() {
             parent: parentShadow,
             editor: false,
             cancelButton: true,
-            onChange: function (color) {
+            onInput: function (color) {
                 parentShadow.style.color = color.rgbaString;
             },
             onDone: function (color) {
