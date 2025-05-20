@@ -432,14 +432,20 @@ class Picker {
         /* Draggable color selection */
 
         //Select hue
-        utils.dragTrack(events, this._domH,  (x, y) => that._setHSLA(x), this.onChange);
+        utils.dragTrack(events, this._domH,  (x, y) => that._setHSLA(x), () => {
+            that.onChange && that.onChange();
+        });
 
         //Select saturation/lightness
-        utils.dragTrack(events, this._domSL, (x, y) => that._setHSLA(null, x, 1 - y), this.onChange);
+        utils.dragTrack(events, this._domSL, (x, y) => that._setHSLA(null, x, 1 - y), () => {
+            that.onChange && that.onChange();
+        });
 
         //Select alpha
         if(this.settings.alpha) {
-            utils.dragTrack(events, this._domA,  (x, y) => that._setHSLA(null, null, null, 1 - y), this.onChange);
+            utils.dragTrack(events, this._domA,  (x, y) => that._setHSLA(null, null, null, 1 - y), () => {
+                that.onChange && that.onChange();
+            });
         }
 
 

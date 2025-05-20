@@ -435,7 +435,7 @@ function dragTrack(eventBucket, area, onInput, onChange) {
             w = bounds.width,
             h = bounds.height,
             x = info.clientX,
-            y = info.clientY;console.log(1, x, y);
+            y = info.clientY;
 
         var relX = clamp(x - bounds.left, 0, w),
             relY = clamp(y - bounds.top, 0, h);
@@ -803,16 +803,22 @@ var Picker = function () {
 
             dragTrack(events, this._domH, function (x, y) {
                 return that._setHSLA(x);
-            }, this.onChange);
+            }, function () {
+                that.onChange && that.onChange();
+            });
 
             dragTrack(events, this._domSL, function (x, y) {
                 return that._setHSLA(null, x, 1 - y);
-            }, this.onChange);
+            }, function () {
+                that.onChange && that.onChange();
+            });
 
             if (this.settings.alpha) {
                 dragTrack(events, this._domA, function (x, y) {
                     return that._setHSLA(null, null, null, 1 - y);
-                }, this.onChange);
+                }, function () {
+                    that.onChange && that.onChange();
+                });
             }
 
             var editInput = this._domEdit;
