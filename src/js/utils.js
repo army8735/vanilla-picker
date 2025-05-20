@@ -11,7 +11,7 @@ class EventBucket {
             handler,
         });
     }
-    
+
     remove(target, type, handler) {
         this._events = this._events.filter(e => {
             let isMatch = true;
@@ -28,7 +28,7 @@ class EventBucket {
     static _doRemove(target, type, handler) {
         target.removeEventListener(type, handler, false);
     }
-    
+
     destroy() {
         this._events.forEach(e => EventBucket._doRemove(e.target, e.type, e.handler));
         this._events = [];
@@ -42,7 +42,7 @@ function parseHTML(htmlString) {
     return div.firstElementChild;
 }
 
-function dragTrack(eventBucket, area, callback) {
+function dragTrack(eventBucket, area, onInput, onChange) {
     var dragging = false;
 
     function clamp(val, min, max) {
@@ -59,12 +59,12 @@ function dragTrack(eventBucket, area, callback) {
             w = bounds.width,
             h = bounds.height,
             x = info.clientX,
-            y = info.clientY;
+            y = info.clientY;console.log(1,x,y)
 
         var relX = clamp(x - bounds.left, 0, w),
             relY = clamp(y - bounds.top, 0, h);
 
-        callback(relX / w, relY / h);
+        onInput(relX / w, relY / h);
     }
 
     function onMouse(e, starting) {
@@ -98,9 +98,24 @@ function dragTrack(eventBucket, area, callback) {
     eventBucket.add(area,   'touchstart',  function(e) { onTouch(e, true); });
     eventBucket.add(window, 'mousemove',   onMouse);
     eventBucket.add(area,   'touchmove',   onTouch);
-    eventBucket.add(window, 'mouseup',     function(e) { dragging = false; });
-    eventBucket.add(area,   'touchend',    function(e) { dragging = false; });
-    eventBucket.add(area,   'touchcancel', function(e) { dragging = false; });
+    eventBucket.add(window, 'mouseup',     function(e) {
+        if (dragging) {
+            onChange();
+            dragging = false;
+        }
+    });
+    eventBucket.add(area,   'touchend',    function(e) {
+        if (dragging) {
+            onChange();
+            dragging = false;
+        }
+    });
+    eventBucket.add(area,   'touchcancel', function(e) {
+        if (dragging) {
+            onChange();
+            dragging = false;
+        }
+    });
 }
 
 

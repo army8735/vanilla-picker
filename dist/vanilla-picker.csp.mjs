@@ -1,8 +1,8 @@
 /*!
- * vanilla-picker v2.12.3
+ * vanilla-picker2 v2.12.3
  * https://vanilla-picker.js.org
  *
- * Copyright 2017-2024 Andreas Borgen (https://github.com/Sphinxxxx), Adam Brooks (https://github.com/dissimulate)
+ * Copyright 2017-2025 Andreas Borgen (https://github.com/Sphinxxxx), Adam Brooks (https://github.com/dissimulate)
  * Released under the ISC license.
  */
 var classCallCheck = function (instance, Constructor) {
@@ -414,7 +414,7 @@ function parseHTML(htmlString) {
     return div.firstElementChild;
 }
 
-function dragTrack(eventBucket, area, callback) {
+function dragTrack(eventBucket, area, onInput, onChange) {
     var dragging = false;
 
     function clamp(val, min, max) {
@@ -435,12 +435,12 @@ function dragTrack(eventBucket, area, callback) {
             w = bounds.width,
             h = bounds.height,
             x = info.clientX,
-            y = info.clientY;
+            y = info.clientY;console.log(1, x, y);
 
         var relX = clamp(x - bounds.left, 0, w),
             relY = clamp(y - bounds.top, 0, h);
 
-        callback(relX / w, relY / h);
+        onInput(relX / w, relY / h);
     }
 
     function onMouse(e, starting) {
@@ -469,13 +469,22 @@ function dragTrack(eventBucket, area, callback) {
     eventBucket.add(window, 'mousemove', onMouse);
     eventBucket.add(area, 'touchmove', onTouch);
     eventBucket.add(window, 'mouseup', function (e) {
-        dragging = false;
+        if (dragging) {
+            onChange();
+            dragging = false;
+        }
     });
     eventBucket.add(area, 'touchend', function (e) {
-        dragging = false;
+        if (dragging) {
+            onChange();
+            dragging = false;
+        }
     });
     eventBucket.add(area, 'touchcancel', function (e) {
-        dragging = false;
+        if (dragging) {
+            onChange();
+            dragging = false;
+        }
     });
 }
 
@@ -524,6 +533,8 @@ var Picker = function () {
 
         this._events = new EventBucket();
 
+        this.onInput = null;
+
         this.onChange = null;
 
         this.onDone = null;
@@ -566,6 +577,9 @@ var Picker = function () {
 
                 transfer(options, settings);
 
+                if (options.onInput) {
+                    this.onInput = options.onInput;
+                }
                 if (options.onChange) {
                     this.onChange = options.onChange;
                 }
@@ -789,22 +803,25 @@ var Picker = function () {
 
             dragTrack(events, this._domH, function (x, y) {
                 return that._setHSLA(x);
-            });
+            }, this.onChange);
 
             dragTrack(events, this._domSL, function (x, y) {
                 return that._setHSLA(null, x, 1 - y);
-            });
+            }, this.onChange);
 
             if (this.settings.alpha) {
                 dragTrack(events, this._domA, function (x, y) {
                     return that._setHSLA(null, null, null, 1 - y);
-                });
+                }, this.onChange);
             }
 
             var editInput = this._domEdit;
             {
                 addEvent(editInput, 'input', function (e) {
                     that._setColor(this.value, { fromEditor: true, failSilently: true });
+                });
+                addEvent(editInput, 'change', function (e) {
+                    _this2.onChange();
                 });
 
                 addEvent(editInput, 'focus', function (e) {
@@ -894,8 +911,8 @@ var Picker = function () {
 
             this._updateUI(flags);
 
-            if (this.onChange && !flags.silent) {
-                this.onChange(col);
+            if (this.onInput && !flags.silent) {
+                this.onInput(col);
             }
         }
     }, {
