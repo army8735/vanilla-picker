@@ -53,7 +53,9 @@ function dragTrack(eventBucket, area, onInput, onChange) {
         if (starting) { dragging = true; }
         if (!dragging) { return; }
 
-        e.preventDefault();
+        if (!starting) {
+            e.preventDefault();
+        }
 
         var bounds = area.getBoundingClientRect(),
             w = bounds.width,
