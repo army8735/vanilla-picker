@@ -93,6 +93,7 @@ class Picker {
          * @member {Picker~colorCallback}
          */
         this.onChange = null;
+        this.onBlur = null;
         /**
          * Callback when the user clicks "Ok".
          * @member {Picker~colorCallback}
@@ -180,6 +181,7 @@ class Picker {
             //because we'll need to fire onInput() if there is a color in the options
             if(options.onInput) { this.onInput = options.onInput; }
             if(options.onChange) { this.onChange = options.onChange; }
+            if(options.onBlur) { this.onBlur = options.onBlur; }
             if(options.onDone)   { this.onDone   = options.onDone; }
             if(options.onOpen)   { this.onOpen   = options.onOpen; }
             if(options.onClose)  { this.onClose  = options.onClose; }
@@ -458,7 +460,10 @@ class Picker {
                 that._setColor(this.value, { fromEditor: true, failSilently: true });
             });
             addEvent(editInput, 'change', (e) => {
-                this.onChange();
+                this.onChange && this.onChange();
+            });
+            addEvent(editInput, 'blur', (e) => {
+                this.onBlur && this.onBlur();
             });
             //Select all text on focus:
             addEvent(editInput, 'focus', function(e) {
