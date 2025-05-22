@@ -457,13 +457,14 @@ class Picker {
         const editInput = this._domEdit;
         /*if(this.settings.editor)*/ {
             addEvent(editInput, 'input', function(e) {
+                // that._setColor(this.value, { fromEditor: true, failSilently: true });
+            });
+            addEvent(editInput, 'change', function(e) {
                 that._setColor(this.value, { fromEditor: true, failSilently: true });
+                that.onChange && that.onChange();
             });
-            addEvent(editInput, 'change', (e) => {
-                this.onChange && this.onChange();
-            });
-            addEvent(editInput, 'blur', (e) => {
-                this.onBlur && this.onBlur();
+            addEvent(editInput, 'blur', function(e) {
+                that.onBlur && that.onBlur();
             });
             //Select all text on focus:
             addEvent(editInput, 'focus', function(e) {
@@ -515,7 +516,7 @@ class Picker {
             if(this.onDone) { this.onDone(this.colour); }
         };
         addEvent(this._domOkay, 'click',   onDoneProxy);
-        onKey(events, dom,      ['Enter'], onDoneProxy);
+        // onKey(events, dom,      ['Enter'], onDoneProxy);
     }
 
 
